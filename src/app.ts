@@ -4,17 +4,17 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { linksRouter } from './routes/links';
 import { redirectRouter } from './routes/redirect';
 import { LinkService } from './services/linkService';
-import { MemoryStore } from './store/memoryStore';
+import { createRepository, type LinkRepository } from './store';
 
 export interface AppDeps {
   config?: AppConfig;
-  store?: MemoryStore;
+  store?: LinkRepository;
   now?: () => Date;
 }
 
 export function createApp(deps: AppDeps = {}): Express {
   const config = deps.config ?? loadConfig();
-  const store = deps.store ?? new MemoryStore();
+  const store = deps.store ?? createRepository(config);
   const service = new LinkService(store, config, deps.now);
 
   const app = express();

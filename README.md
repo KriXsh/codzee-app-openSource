@@ -73,6 +73,8 @@ curl -X POST http://localhost:3000/api/links \
 | `PORT`        | `3000`                   | HTTP port                 |
 | `BASE_URL`    | `http://localhost:$PORT` | Used to build `shortUrl`  |
 | `CODE_LENGTH` | `7`                      | Length of generated codes |
+| `STORAGE_DRIVER` | `memory`              | `memory` or `file` (JSON persistence) |
+| `DATA_FILE`   | `data/links.json`        | Path used by the `file` driver |
 
 ## Project layout
 
@@ -83,7 +85,7 @@ src/
   config.ts           # env parsing
   routes/             # HTTP layer
   services/           # business logic
-  store/              # persistence (in-memory for now)
+  store/              # LinkRepository interface + memory / JSON-file drivers
   middleware/         # error handling
   utils/              # code generator, http errors
 tests/                # vitest + supertest
