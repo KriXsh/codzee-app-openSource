@@ -1,7 +1,8 @@
 import type { Link } from '../types';
+import type { LinkRepository } from './linkRepository';
 
-export class MemoryStore {
-  private readonly links = new Map<string, Link>();
+export class MemoryStore implements LinkRepository {
+  protected readonly links = new Map<string, Link>();
 
   get(code: string): Link | undefined {
     return this.links.get(code);

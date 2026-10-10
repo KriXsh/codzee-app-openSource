@@ -1,5 +1,5 @@
 import type { AppConfig } from '../config';
-import type { MemoryStore } from '../store/memoryStore';
+import type { LinkRepository } from '../store/linkRepository';
 import type { CreateLinkInput, Link } from '../types';
 import { generateCode } from '../utils/codeGenerator';
 import { conflict, gone, notFound } from '../utils/errors';
@@ -9,7 +9,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 export class LinkService {
   constructor(
-    private readonly store: MemoryStore,
+    private readonly store: LinkRepository,
     private readonly config: AppConfig,
     private readonly now: () => Date = () => new Date(),
   ) {}
