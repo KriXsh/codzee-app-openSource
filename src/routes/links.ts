@@ -1,9 +1,10 @@
 import { Router } from 'express';
+import type { AnalyticsService } from '../services/analyticsService';
 import type { LinkService } from '../services/linkService';
 import type { Link } from '../types';
 import { createLinkSchema } from '../validation';
 
-export function linksRouter(service: LinkService): Router {
+export function linksRouter(service: LinkService, analytics: AnalyticsService): Router {
   const router = Router();
 
   const present = (link: Link) => ({ ...link, shortUrl: service.shortUrl(link.code) });
@@ -20,6 +21,11 @@ export function linksRouter(service: LinkService): Router {
 
   router.get('/:code', (req, res) => {
     res.json({ data: present(service.get(req.params.code)) });
+  });
+
+  router.get('/:code/stats', (req, res) => {
+    const link = service.get(req.params.code);
+    res.json({ data: analytics.stats(link.code) });
   });
 
   router.delete('/:code', (req, res) => {
