@@ -1,5 +1,6 @@
 import { createApp } from '../src/app';
 import type { AppConfig } from '../src/config';
+import { ClickStore } from '../src/store/clickStore';
 import { MemoryStore } from '../src/store/memoryStore';
 
 export const testConfig: AppConfig = {
@@ -10,6 +11,7 @@ export const testConfig: AppConfig = {
 
 export function buildTestApp(opts: { now?: () => Date } = {}) {
   const store = new MemoryStore();
-  const app = createApp({ config: testConfig, store, now: opts.now });
-  return { app, store };
+  const clicks = new ClickStore();
+  const app = createApp({ config: testConfig, store, clicks, now: opts.now });
+  return { app, store, clicks };
 }

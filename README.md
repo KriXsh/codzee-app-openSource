@@ -11,6 +11,7 @@ refactor changes).
 - Create short links with generated or custom aliases
 - Optional expiry (`expiresInDays`) — expired links return `410 Gone`
 - Click counting on redirect
+- Click analytics: clicks per day, unique visitors, top referrers, recent clicks
 - JSON error envelope with validation details
 - Fully tested with Vitest + Supertest, CI on GitHub Actions
 
@@ -36,6 +37,7 @@ npm run build && npm start
 | GET    | `/api/links`       | List links (newest first)       |
 | POST   | `/api/links`       | Create a link                   |
 | GET    | `/api/links/:code` | Get one link                    |
+| GET    | `/api/links/:code/stats` | Click analytics for a link |
 | DELETE | `/api/links/:code` | Delete a link                   |
 | GET    | `/:code`           | Redirect to the target URL      |
 

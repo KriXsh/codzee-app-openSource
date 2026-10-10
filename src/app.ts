@@ -3,12 +3,15 @@ import { loadConfig, type AppConfig } from './config';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { linksRouter } from './routes/links';
 import { redirectRouter } from './routes/redirect';
+import { AnalyticsService } from './services/analyticsService';
 import { LinkService } from './services/linkService';
+import { ClickStore } from './store/clickStore';
 import { MemoryStore } from './store/memoryStore';
 
 export interface AppDeps {
   config?: AppConfig;
   store?: MemoryStore;
+  clicks?: ClickStore;
   now?: () => Date;
 }
 
@@ -16,6 +19,7 @@ export function createApp(deps: AppDeps = {}): Express {
   const config = deps.config ?? loadConfig();
   const store = deps.store ?? new MemoryStore();
   const service = new LinkService(store, config, deps.now);
+  const analytics = new AnalyticsService(deps.clicks ?? new ClickStore(), deps.now);
 
   const app = express();
   app.disable('x-powered-by');
@@ -25,8 +29,8 @@ export function createApp(deps: AppDeps = {}): Express {
     res.json({ status: 'ok' });
   });
 
-  app.use('/api/links', linksRouter(service));
-  app.use('/', redirectRouter(service));
+  app.use('/api/links', linksRouter(service, analytics));
+  app.use('/', redirectRouter(service, analytics));
 
   app.use(notFoundHandler);
   app.use(errorHandler);
