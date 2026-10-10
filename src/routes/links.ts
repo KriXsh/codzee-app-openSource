@@ -1,9 +1,14 @@
-import { Router } from 'express';
+import { Router, type RequestHandler } from 'express';
 import type { LinkService } from '../services/linkService';
 import type { Link } from '../types';
 import { createLinkSchema } from '../validation';
 
-export function linksRouter(service: LinkService): Router {
+export interface LinksRouterGuards {
+  auth: RequestHandler;
+  createLimiter: RequestHandler;
+}
+
+export function linksRouter(service: LinkService, guards: LinksRouterGuards): Router {
   const router = Router();
 
   const present = (link: Link) => ({ ...link, shortUrl: service.shortUrl(link.code) });
@@ -12,7 +17,7 @@ export function linksRouter(service: LinkService): Router {
     res.json({ data: service.list().map(present) });
   });
 
-  router.post('/', (req, res) => {
+  router.post('/', guards.auth, guards.createLimiter, (req, res) => {
     const input = createLinkSchema.parse(req.body);
     const link = service.create(input);
     res.status(201).json({ data: present(link) });
@@ -22,7 +27,7 @@ export function linksRouter(service: LinkService): Router {
     res.json({ data: present(service.get(req.params.code)) });
   });
 
-  router.delete('/:code', (req, res) => {
+  router.delete<{ code: string }>('/:code', guards.auth, (req, res) => {
     service.remove(req.params.code);
     res.status(204).end();
   });
