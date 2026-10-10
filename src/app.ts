@@ -1,6 +1,8 @@
 import express, { type Express } from 'express';
 import { loadConfig, type AppConfig } from './config';
+import { requireApiKey } from './middleware/apiKey';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import { rateLimit } from './middleware/rateLimit';
 import { linksRouter } from './routes/links';
 import { redirectRouter } from './routes/redirect';
 import { LinkService } from './services/linkService';
@@ -25,7 +27,12 @@ export function createApp(deps: AppDeps = {}): Express {
     res.json({ status: 'ok' });
   });
 
-  app.use('/api/links', linksRouter(service));
+  const guards = {
+    auth: requireApiKey(config.apiKeys),
+    createLimiter: rateLimit(config.rateLimit),
+  };
+
+  app.use('/api/links', linksRouter(service, guards));
   app.use('/', redirectRouter(service));
 
   app.use(notFoundHandler);

@@ -73,6 +73,9 @@ curl -X POST http://localhost:3000/api/links \
 | `PORT`        | `3000`                   | HTTP port                 |
 | `BASE_URL`    | `http://localhost:$PORT` | Used to build `shortUrl`  |
 | `CODE_LENGTH` | `7`                      | Length of generated codes |
+| `API_KEYS`    | _(empty)_                | Comma-separated keys required for `POST`/`DELETE` via `x-api-key`. Empty disables auth. |
+| `RATE_LIMIT_WINDOW_MS` | `60000`         | Rate-limit window for link creation |
+| `RATE_LIMIT_MAX` | `30`                  | Max link creations per IP per window |
 
 ## Project layout
 
